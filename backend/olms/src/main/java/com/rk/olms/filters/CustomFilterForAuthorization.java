@@ -1,8 +1,10 @@
 package com.rk.olms.filters;
 
+import com.rk.olms.configs.security.SecurityUserDetails;
 import com.rk.olms.dtos.ResponseDto;
 import com.rk.olms.services.SecurityUserDetailService;
 import com.rk.olms.utils.JWTUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,10 +48,16 @@ public class CustomFilterForAuthorization extends OncePerRequestFilter {
             if (null != authorization && authorization.startsWith("Bearer ")) {
                 token = authorization.substring(7);
                 userName = jwtUtility.getUsernameFromToken(token);
+
+                Boolean isTokenExpired = jwtUtility.isTokenExpired(token);
+
+                if(isTokenExpired){
+                    throw new Exception("Token Expired, generate new token");
+                }
             }
 
             if (null != userName && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails
+                SecurityUserDetails userDetails
                         = userService.loadUserByUsername(userName);
 
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
@@ -65,10 +73,10 @@ public class CustomFilterForAuthorization extends OncePerRequestFilter {
 
             }
         } catch (Exception ex) {
-            log.error("exception is :: {}", ex.getLocalizedMessage());
+            log.error("exception is ::", ex);
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
             ResponseDto<String> exceptionResponse = new ResponseDto<>();
-            exceptionResponse.setRd("Exception: " + ex.getMessage());
+            exceptionResponse.setRd(ex.getMessage());
             httpServletResponse.getWriter().write(GSON.toJson(exceptionResponse));
             return;
         }

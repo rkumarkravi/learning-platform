@@ -19,7 +19,7 @@ public class SecurityUserDetailService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public SecurityUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         SecurityUserDetails securityUserDetails=null;
         Optional<UserEntity> userEntityOptional =userEntityRepository.findByUsernameOrEmail(username);
         if (userEntityOptional.isPresent()) {
