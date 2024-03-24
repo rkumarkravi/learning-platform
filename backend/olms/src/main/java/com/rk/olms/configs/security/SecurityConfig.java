@@ -25,7 +25,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private static final String[] publicApis = {
-            "/auth/**"
+            "/auth/login",
+            "/auth/register",
+            "/auth/renewTkn"
     };
 
     private final SecurityUserDetailService userService;

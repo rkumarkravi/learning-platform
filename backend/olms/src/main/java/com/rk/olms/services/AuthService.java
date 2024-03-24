@@ -4,11 +4,14 @@ import com.rk.olms.configs.security.SecurityUserDetails;
 import com.rk.olms.daos.models.UserEntity;
 import com.rk.olms.daos.repos.UserEntityRepository;
 import com.rk.olms.dtos.ResponseDto;
+import com.rk.olms.dtos.requests.RenewTknReqDto;
 import com.rk.olms.dtos.requests.UserLoginReqDto;
 import com.rk.olms.dtos.requests.UserRegisterReqDto;
+import com.rk.olms.dtos.responses.RenewTknResDto;
 import com.rk.olms.dtos.responses.UserLoginResDto;
 import com.rk.olms.dtos.responses.UserRegisterResDto;
 import com.rk.olms.utils.JWTUtil;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,10 +19,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.rk.olms.utils.Utility.B64EN;
 
 @Service
 @Slf4j
@@ -28,6 +32,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+
 
     public AuthService(UserEntityRepository userEntityRepository, AuthenticationManager authenticationManager, JWTUtil jwtUtil, PasswordEncoder passwordEncoder) {
         this.userEntityRepository = userEntityRepository;
@@ -69,7 +74,8 @@ public class AuthService {
             UserLoginResDto userResDto = new UserLoginResDto(userEntityOptional.get());
 
             Map<String, Object> claims = new HashMap<>();
-            claims.put("emid", Base64.getEncoder().encode(userReq.getEmail().getBytes()));
+            claims.put("emid", B64EN.encode(userReq.getEmail().getBytes()));
+            claims.put("uid", 0L);
 
             Map<String, String> tokens = jwtUtil.generateToken(userReq.getEmail(), claims);
             userResDto.setAt(tokens.get("authToken"));
@@ -81,6 +87,41 @@ public class AuthService {
         } else {
             responseDto.setRd("Invalid Credentials!");
         }
+        return responseDto;
+    }
+
+
+    public ResponseDto<RenewTknResDto> renewTkn(RenewTknReqDto renewTknReqDto) {
+        ResponseDto<RenewTknResDto> responseDto=new ResponseDto<>();
+        Boolean isRtExpired=jwtUtil.isTokenExpired(renewTknReqDto.getRt());
+        Boolean isAtExpired=jwtUtil.isTokenExpired(renewTknReqDto.getAt());
+        Claims claimsRt =jwtUtil.getAllClaimsFromToken(renewTknReqDto.getRt());
+        Claims claimsAt =jwtUtil.getAllClaimsFromToken(renewTknReqDto.getRt());
+
+        Boolean isUidSame=claimsRt.get("uid").equals(claimsAt.get("uid"));
+
+        if(isRtExpired){
+            responseDto.setRs("99");
+            responseDto.setRd("Please login again due to security reasons!");
+            return responseDto;
+        }
+
+        if(jwtUtil.isRefreshToken(renewTknReqDto.getRt()) && isAtExpired && isUidSame){
+            RenewTknResDto renewTknResDto=new RenewTknResDto();
+            log.info("claims: {}",claimsRt);
+            int uid = (int)claimsRt.get("uid");
+            claimsRt.put("uid",++uid);
+
+            String rt=jwtUtil.updateRefreshToken(renewTknReqDto.getRt(),claimsRt);
+            String at=jwtUtil.doGenerateAuthToken(claimsRt.getSubject(),claimsRt);
+            renewTknResDto.setAt(at);
+            renewTknResDto.setRt(rt);
+
+            responseDto.setPayload(renewTknResDto);
+            responseDto.setRs("S");
+            responseDto.setRs("Token Refreshed!");
+        }
+
         return responseDto;
     }
 }

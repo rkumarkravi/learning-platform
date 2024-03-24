@@ -1,6 +1,7 @@
 package com.rk.olms.utils;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,8 @@ import java.util.function.Function;
 @Slf4j
 public class JWTUtil implements Serializable {
 
-    public static final long JWT_AUTH_TOKEN_VALIDITY = 1 * 60 * 60;
-    public static final long JWT_REFRESH_TOKEN_VALIDITY = 24 * 60 * 60;
+    @Value("${jwt.auth.validity:86400}") private long JWT_AUTH_TOKEN_VALIDITY;
+    @Value("${jwt.refresh.validity:604800}") private long JWT_REFRESH_TOKEN_VALIDITY;
     private static final long serialVersionUID = 234234523523L;
     @Value("${jwt.secret}")
     private String secretKey;
@@ -58,16 +59,24 @@ public class JWTUtil implements Serializable {
     }
 
     //for retrieving any information from token we will need the secret key
-    private Claims getAllClaimsFromToken(String token) {
+    public Claims getAllClaimsFromToken(String token) {
         Claims claims = null;
-        claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        try {
+            claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        }catch (ExpiredJwtException e){
+            claims=e.getClaims();
+        }
         return claims;
     }
 
     //check if the token has expired
     public Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
+        try {
+            final Date expiration = getExpirationDateFromToken(token);
+            return expiration.before(new Date());
+        }catch (ExpiredJwtException e){
+            return true;
+        }
     }
 
     public Boolean isAuthToken(String token) {
@@ -75,16 +84,18 @@ public class JWTUtil implements Serializable {
         return type != null && type.equals("auth");
     }
 
-    //generate token for user
-    public Map<String,String> generateToken(String username, Map<String, Object> otherDetails) {
+    public Boolean isRefreshToken(String token) {
+        final String type = (String) getDataFromTokenByKey(token,"type");
+        return type != null && type.equals("refresh");
+    }
 
+    //generate token for user
+    public Map<String,String> generateToken(String subject, Map<String, Object> otherDetails) {
         Map<String, Object> claims = new HashMap<>(otherDetails);
 
         Map<String,String> data=new HashMap<>();
-        claims.put("type","auth");
-        data.put("authToken",doGenerateToken(claims,username));
-        claims.put("type","refresh");
-        data.put("refreshToken",doGenerateRefreshToken(claims,username));
+        data.put("authToken",doGenerateAuthToken(subject,claims));
+        data.put("refreshToken",doGenerateRefreshToken(claims,subject));
 
         return data;
     }
@@ -92,7 +103,8 @@ public class JWTUtil implements Serializable {
     //while creating the token -
     //1. Define  claims of the token, like Issuer, Expiration, Subject, and the ID
     //2. Sign the JWT using the HS512 algorithm and secret key.
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
+    public String doGenerateAuthToken( String subject,Map<String, Object> claims) {
+        claims.put("type","auth");
 //        log.info("secret key: {}",secretKey);
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_AUTH_TOKEN_VALIDITY * 1000))
@@ -100,6 +112,7 @@ public class JWTUtil implements Serializable {
     }
 
     private String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
+        claims.put("type","refresh");
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_REFRESH_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secretKey).compact();
@@ -109,5 +122,14 @@ public class JWTUtil implements Serializable {
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public String updateRefreshToken(String token, Map<String, Object> newClaims) {
+        Claims claims = getAllClaimsFromToken(token);
+        claims.put("type","refresh");
+        // Re-sign the token with the same key
+        return Jwts.builder().setClaims(claims).setSubject(claims.getSubject()).setIssuedAt(claims.getIssuedAt())
+                .setExpiration(claims.getExpiration())
+                .signWith(SignatureAlgorithm.HS512, secretKey).compact();
     }
 }

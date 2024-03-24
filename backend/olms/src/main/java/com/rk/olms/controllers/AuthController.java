@@ -1,7 +1,9 @@
 package com.rk.olms.controllers;
 
+import com.rk.olms.dtos.requests.RenewTknReqDto;
 import com.rk.olms.dtos.requests.UserLoginReqDto;
 import com.rk.olms.dtos.requests.UserRegisterReqDto;
+import com.rk.olms.dtos.responses.RenewTknResDto;
 import com.rk.olms.services.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +26,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Object userRegister(@RequestBody UserLoginReqDto userLoginReqDto){
+    public Object userLogin(@RequestBody UserLoginReqDto userLoginReqDto){
         return authService.login(userLoginReqDto);
+    }
+
+    @PostMapping("/renewTkn")
+    public Object renewTkn(@RequestBody RenewTknReqDto renewTknReqDto){
+        return authService.renewTkn(renewTknReqDto);
     }
 }
