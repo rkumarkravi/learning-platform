@@ -2,7 +2,7 @@ package com.rk.olms.services;
 
 import com.rk.olms.configs.security.SecurityUserDetails;
 import com.rk.olms.daos.models.UserEntity;
-import com.rk.olms.daos.repos.UserEntityRepository;
+import com.rk.olms.daos.repos.UserRepository;
 import com.rk.olms.dtos.ResponseDto;
 import com.rk.olms.dtos.requests.RenewTknReqDto;
 import com.rk.olms.dtos.requests.UserLoginReqDto;
@@ -28,14 +28,14 @@ import static com.rk.olms.utils.Utility.B64EN;
 @Service
 @Slf4j
 public class AuthService {
-    private final UserEntityRepository userEntityRepository;
+    private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
 
-    public AuthService(UserEntityRepository userEntityRepository, AuthenticationManager authenticationManager, JWTUtil jwtUtil, PasswordEncoder passwordEncoder) {
-        this.userEntityRepository = userEntityRepository;
+    public AuthService(UserRepository userRepository, AuthenticationManager authenticationManager, JWTUtil jwtUtil, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
@@ -52,7 +52,7 @@ public class AuthService {
         userEntity.setPhoneNumber(userReq.getPhoneNumber());
         userEntity.setInterests(String.join(",", userReq.getInterests()));
         userEntity.setFullName(userReq.getFullName());
-        userEntity = userEntityRepository.save(userEntity);
+        userEntity = userRepository.save(userEntity);
 
         UserRegisterResDto userRegisterResDto = new UserRegisterResDto(userEntity);
         responseDto.setPayload(userRegisterResDto);

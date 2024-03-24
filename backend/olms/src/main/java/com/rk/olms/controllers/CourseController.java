@@ -1,6 +1,7 @@
 package com.rk.olms.controllers;
 
 import com.rk.olms.services.CourseService;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +16,14 @@ public class CourseController {
     }
 
 
-    @PostMapping("/")
-    public Object getCourses(){
+    @PostMapping("")
+    public Object getCourses() {
         return this.courseService.getCourses();
     }
+
+    @PostMapping("/{cid}")
+    public Object getCourse(@PathVariable("cid") long courseId) {
+        return this.courseService.getCourse(courseId);
+    }
+
 }
