@@ -8,8 +8,6 @@ import com.rk.olms.dtos.responses.CourseResDto;
 import com.rk.olms.services.CourseMgmtService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/course-mgmt")
 public class CourseMgmtController {
@@ -42,8 +40,4 @@ public class CourseMgmtController {
         return courseMgmtService.deleteCourseContent(courseId, contentId);
     }
 
-    @GetMapping("/content/{courseId}")
-    public ResponseDto<List<CourseContentResDto>> getAllCourseContent(@PathVariable("courseId") Long courseId) {
-        return courseMgmtService.getAllCourseContent(courseId);
-    }
 }

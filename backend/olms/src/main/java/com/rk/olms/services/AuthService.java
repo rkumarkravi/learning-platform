@@ -76,6 +76,7 @@ public class AuthService {
             Map<String, Object> claims = new HashMap<>();
             claims.put("emid", B64EN.encode(userReq.getEmail().getBytes()));
             claims.put("uid", 0L);
+            claims.put("role", userEntityOptional.get().getRole());
 
             Map<String, String> tokens = jwtUtil.generateToken(userReq.getEmail(), claims);
             userResDto.setAt(tokens.get("authToken"));

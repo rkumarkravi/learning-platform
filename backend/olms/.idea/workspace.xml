@@ -5,15 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150b751-2fe8-47e7-87a1-190c16908500" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/dtos/requests/FileDeleteReqDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/dtos/requests/FileUploadReqDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/configs/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/configs/security/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/controllers/CourseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/controllers/CourseController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/controllers/CourseMgmtController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/controllers/CourseMgmtController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/daos/repos/CourseContentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/daos/repos/CourseContentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/CourseMgmtService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/CourseMgmtService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/utils/FileUploadUtility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/FileUploadService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../docs/project.docx" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/project.docx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
