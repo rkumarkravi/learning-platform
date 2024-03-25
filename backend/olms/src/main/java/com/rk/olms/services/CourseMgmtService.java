@@ -7,24 +7,31 @@ import com.rk.olms.daos.repos.CourseRepository;
 import com.rk.olms.dtos.ResponseDto;
 import com.rk.olms.dtos.requests.CourseContentReqDto;
 import com.rk.olms.dtos.requests.CourseReqDto;
+import com.rk.olms.dtos.requests.FileDeleteReqDto;
+import com.rk.olms.dtos.requests.FileUploadReqDto;
 import com.rk.olms.dtos.responses.CourseContentResDto;
 import com.rk.olms.dtos.responses.CourseResDto;
-import com.rk.olms.utils.FileUploadUtility;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseMgmtService {
-    private final CourseRepository courseRepository;
     @Value("${file.upload.dir}")
     String fileUploadDir;
-    private final CourseContentRepository courseContentRepository;
 
-    public CourseMgmtService(CourseRepository courseRepository, CourseContentRepository courseContentRepository) {
+    private final CourseRepository courseRepository;
+
+    private final CourseContentRepository courseContentRepository;
+    private final FileUploadService fileUploadService;
+
+    public CourseMgmtService(CourseRepository courseRepository, CourseContentRepository courseContentRepository, FileUploadService fileUploadService) {
         this.courseRepository = courseRepository;
         this.courseContentRepository = courseContentRepository;
+        this.fileUploadService = fileUploadService;
     }
 
     public ResponseDto<CourseResDto> createCourseMetaData(CourseReqDto courseReqDto) {
@@ -38,15 +45,17 @@ public class CourseMgmtService {
         return responseDto;
     }
 
-    public ResponseDto<CourseContentResDto> createCourseContent(CourseContentReqDto courseContentReqDto,
-                                                                long courseId) {
+    public ResponseDto<CourseContentResDto> createCourseContent(CourseContentReqDto courseContentReqDto, long courseId) {
         ResponseDto<CourseContentResDto> responseDto = new ResponseDto<>();
 
         Optional<CourseEntity> courseOptional = courseRepository.findById(courseId);
 
         if (courseOptional.isPresent()) {
-            String uploadDir = fileUploadDir + courseId;
-            ResponseDto<String> uploadRes = FileUploadUtility.uploadToDir(uploadDir, courseContentReqDto.getFile());
+            FileUploadReqDto strategyReqDto = new FileUploadReqDto();
+            strategyReqDto.setCourseId(courseId);
+            strategyReqDto.setFile(courseContentReqDto.getFile());
+            strategyReqDto.setFilePath(fileUploadDir);
+            ResponseDto<String> uploadRes = fileUploadService.uploadFile(strategyReqDto);
 
             if ("S".equals(uploadRes.getRs())) {
                 CourseContentEntity cce = CourseContentEntity
@@ -77,6 +86,123 @@ public class CourseMgmtService {
                 responseDto.setRs(uploadRes.getRs());
             }
         }
+        return responseDto;
+    }
+
+    public ResponseDto<CourseContentResDto> updateCourseContent(CourseContentReqDto courseContentReqDto, long courseId, long contentId) {
+        ResponseDto<CourseContentResDto> responseDto = new ResponseDto<>();
+
+        Optional<CourseContentEntity> courseContentOpt = courseContentRepository.findById(contentId);
+        if (courseContentOpt.isPresent()) {
+            CourseContentEntity cce = courseContentOpt.get();
+            FileDeleteReqDto fileDeleteReqDto = new FileDeleteReqDto();
+            fileDeleteReqDto.setCourseId(cce.getCourse().getCourseId());
+            fileDeleteReqDto.setFilePath(fileUploadDir + "/" + cce.getContentUrl());
+            ResponseDto<String> fileDeleteRes = fileUploadService.deleteFile(fileDeleteReqDto);
+
+            if ("S".equals(fileDeleteRes.getRs())) {
+                FileUploadReqDto strategyReqDto = new FileUploadReqDto();
+                strategyReqDto.setCourseId(cce.getCourse().getCourseId());
+                strategyReqDto.setFile(courseContentReqDto.getFile());
+                strategyReqDto.setFilePath(fileUploadDir);
+                ResponseDto<String> uploadRes = fileUploadService.uploadFile(strategyReqDto);
+                if ("S".equals(uploadRes.getRs())) {
+
+                    cce.setContentUrl(uploadRes.getPayload());
+                    cce.setFormat(courseContentReqDto.getFormat());
+                    cce.setDescription(courseContentReqDto.getDescription());
+                    cce.setTitle(courseContentReqDto.getTitle());
+                    cce = courseContentRepository.save(cce);
+
+                    responseDto.setPayload(CourseContentResDto.builder()
+                            .contentId(cce.getId())
+                            .courseId(cce.getCourse().getCourseId())
+                            .title(cce.getTitle())
+                            .description(cce.getDescription())
+                            .url(cce.getContentUrl())
+                            .format(cce.getFormat())
+                            .build()
+                    );
+
+                    responseDto.setRd("Content updated successfully!");
+                    responseDto.setRs("S");
+                } else {
+                    responseDto.setRd(uploadRes.getRd());
+                    responseDto.setRs(uploadRes.getRs());
+                }
+            } else {
+                responseDto.setRs(fileDeleteRes.getRs());
+                responseDto.setRd(fileDeleteRes.getRd());
+            }
+
+        } else {
+            responseDto.setRd("Content not available!");
+        }
+
+        return responseDto;
+    }
+
+    public ResponseDto<CourseContentResDto> deleteCourseContent(long courseId, long contentId) {
+        ResponseDto<CourseContentResDto> responseDto = new ResponseDto<>();
+
+        Optional<CourseContentEntity> courseContentOpt = courseContentRepository.findById(contentId);
+        if (courseContentOpt.isPresent()) {
+            CourseContentEntity cce = courseContentOpt.get();
+            FileDeleteReqDto fileDeleteReqDto = new FileDeleteReqDto();
+            fileDeleteReqDto.setCourseId(cce.getCourse().getCourseId());
+            fileDeleteReqDto.setFilePath(fileUploadDir + "/" + cce.getContentUrl());
+            ResponseDto<String> fileDeleteRes = fileUploadService.deleteFile(fileDeleteReqDto);
+
+            if ("S".equals(fileDeleteRes.getRs())) {
+
+                courseContentRepository.delete(cce);
+                responseDto.setPayload(CourseContentResDto.builder()
+                        .contentId(cce.getId())
+                        .courseId(cce.getCourse().getCourseId())
+                        .title(cce.getTitle())
+                        .description(cce.getDescription())
+                        .url(cce.getContentUrl())
+                        .format(cce.getFormat())
+                        .build()
+                );
+                responseDto.setRd("Content deleted successfully!");
+                responseDto.setRs("S");
+            } else {
+                responseDto.setRs(fileDeleteRes.getRs());
+                responseDto.setRd(fileDeleteRes.getRd());
+            }
+
+        } else {
+            responseDto.setRd("Content not available!");
+        }
+
+        return responseDto;
+    }
+
+    public ResponseDto<List<CourseContentResDto>> getAllCourseContent(Long courseId) {
+        ResponseDto<List<CourseContentResDto>> responseDto = new ResponseDto<>();
+
+        Optional<CourseEntity> ceOpt = courseRepository.findById(courseId);
+
+        if (ceOpt.isPresent()) {
+            List<CourseContentEntity> courseContents = courseContentRepository.findByCourse_CourseId(courseId);
+
+            List<CourseContentResDto> courseContentResDtos = courseContents.stream().map(cce -> CourseContentResDto.builder()
+                    .contentId(cce.getId())
+                    .courseId(cce.getCourse().getCourseId())
+                    .title(cce.getTitle())
+                    .description(cce.getDescription())
+                    .url(cce.getContentUrl())
+                    .format(cce.getFormat())
+                    .build()).collect(Collectors.toList());
+
+            responseDto.setPayload(courseContentResDtos);
+            responseDto.setRd("Successful!");
+            responseDto.setRs("S");
+        } else {
+            responseDto.setRd("Course not available!");
+        }
+
         return responseDto;
     }
 }
