@@ -1,9 +1,8 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Signup from './pages/Signup.tsx';
+import AuthLayout from './pages/auth/AuthLayout.tsx';
 
 const router = createBrowserRouter([
   {
@@ -12,7 +11,7 @@ const router = createBrowserRouter([
     // errorElement: <ErrorPage />,
     children: [
       {
-        element: <Signup />,
+        element: <AuthLayout />,
         index: true
       },
       // {
