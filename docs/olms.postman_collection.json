@@ -1,0 +1,818 @@
+{
+	"info": {
+		"_postman_id": "70305baf-591c-4dae-bfe6-6b12c18a7a26",
+		"name": "olms",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8877828"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"teacher\",\r\n    \"password\": \"password\",\r\n    \"email\": \"teacher@example.com\",\r\n    \"fullName\": \"John Teacher\",\r\n    \"phoneNumber\": \"9234567890\",\r\n    \"interests\": [\r\n        \"Programming\",\r\n        \"Web Development\",\r\n        \"Machine Learning\"\r\n    ],\r\n    \"role\": \"TEACHER\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/auth/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Stores the userId in an environment or global variable\r",
+							"var responseBody = pm.response.json();\r",
+							"var at = responseBody.payload.at;\r",
+							"pm.environment.set(\"at\", at);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\": \"password\",\r\n    \"email\": \"teacher@example.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/auth/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "\nThis endpoint is used to authenticate and login a user. \n\n### Request\nThe request should be sent as an HTTP POST to `{{url}}/auth/login` with a raw request body. The payload should include the user's email and password.\n\nExample:\n```json\n{\n    \"password\": \"user_password\",\n    \"email\": \"user_email\"\n}\n```\n\n### Response\nUpon a successful login, the server will respond with a status code of 200 and a JSON payload containing the user's information, including userId, username, email, fullName, phoneNumber, interests, role, access token (at), and refresh token (rt).\n\nExample response:\n```json\n{\n    \"rs\": \"\",\n    \"rd\": \"\",\n    \"payload\": {\n        \"userId\": 0,\n        \"username\": \"\",\n        \"email\": \"\",\n        \"fullName\": \"\",\n        \"phoneNumber\": \"\",\n        \"interests\": [\"\"],\n        \"role\": \"\",\n        \"at\": \"\",\n        \"rt\": \"\"\n    }\n}\n```\n"
+			},
+			"response": [
+				{
+					"name": "login | STUDENT ROLE",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"password\",\r\n    \"email\": \"example@example.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "login | TEACHER ROLE",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"password\",\r\n    \"email\": \"teacher@example.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "renewTkn",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"at\": \"eyJhbGciOiJIUzUxMiJ9.eyJ1aWQiOjAsInN1YiI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJlbWlkIjoiV2xob2FHSllRbk5hVlVKc1pVZEdkR05IZUd4TWJVNTJZbEU5UFE9PSIsInR5cGUiOiJhdXRoIiwiZXhwIjoxNzExNDQ5MDkxLCJpYXQiOjE3MTEzNjI2OTF9.MPbT9Z8KaDcnZwWvqR0lpli4XJYT7_Ovdh2I5ci-xOAf6Z3rvNNW1cL4lgepKG3LEblIHBDqmkgLSRYh81I_Lg\",\r\n    \"rt\": \"eyJhbGciOiJIUzUxMiJ9.eyJ1aWQiOjAsInN1YiI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJlbWlkIjoiV2xob2FHSllRbk5hVlVKc1pVZEdkR05IZUd4TWJVNTJZbEU5UFE9PSIsInR5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzExNDQ5MDkxLCJpYXQiOjE3MTEzNjI2OTF9.oa-oIWrm6iX6Uj4KH8p5thLiooabTEl4LGNJ8aF-ctmGDi1uFhhC7HaO4h9TzWPtt_q6MsEdFbSiSTf4fJkThw\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/auth/renewTkn",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"renewTkn"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "renewTkn failure",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"at\": \"eyJhbGciOiJIUzUxMiJ9.eyJ1aWQiOjAsInN1YiI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJlbWlkIjoiV2xob2FHSllRbk5hVlVKc1pVZEdkR05IZUd4TWJVNTJZbEU5UFE9PSIsInR5cGUiOiJhdXRoIiwiZXhwIjoxNzExMjU0NDkyLCJpYXQiOjE3MTEyNTQ0MzJ9.EIX_Im1c3K9mD1_THKa8ClDvfxq8P87ScYNC3WjfFUmByBaser04ZHP4fSLP9M6a-BtU9Hilszf2kEf1RPZ0iQ\",\r\n    \"rt\": \"eyJhbGciOiJIUzUxMiJ9.eyJ1aWQiOjAsInN1YiI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJlbWlkIjoiV2xob2FHSllRbk5hVlVKc1pVZEdkR05IZUd4TWJVNTJZbEU5UFE9PSIsInR5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzExODU5MjMyLCJpYXQiOjE3MTEyNTQ0MzJ9.okDgNPo3vj4vulFnAXBLBqRHBEekuaDCPc4JX7KjUg-iNE9wf-nBg4XDYzn_6q3yJqSHAXLyggLRnnA33u_CUw\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/renewTkn",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"renewTkn"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "renewTkn Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"at\": \"eyJhbGciOiJIUzUxMiJ9.eyJ1aWQiOjAsInN1YiI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJlbWlkIjoiV2xob2FHSllRbk5hVlVKc1pVZEdkR05IZUd4TWJVNTJZbEU5UFE9PSIsInR5cGUiOiJhdXRoIiwiZXhwIjoxNzExMjU0NDkyLCJpYXQiOjE3MTEyNTQ0MzJ9.EIX_Im1c3K9mD1_THKa8ClDvfxq8P87ScYNC3WjfFUmByBaser04ZHP4fSLP9M6a-BtU9Hilszf2kEf1RPZ0iQ\",\r\n        \"rt\": \"eyJhbGciOiJIUzUxMiJ9.eyJ1aWQiOjAsInN1YiI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJlbWlkIjoiV2xob2FHSllRbk5hVlVKc1pVZEdkR05IZUd4TWJVNTJZbEU5UFE9PSIsInR5cGUiOiJyZWZyZXNoIiwiZXhwIjoxNzExODU5MjMyLCJpYXQiOjE3MTEyNTQ0MzJ9.okDgNPo3vj4vulFnAXBLBqRHBEekuaDCPc4JX7KjUg-iNE9wf-nBg4XDYzn_6q3yJqSHAXLyggLRnnA33u_CUw\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/renewTkn",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"renewTkn"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "validTkn",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/auth/validTkn",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"validTkn"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "courses",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/courses/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"courses",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "course-mgmt | create course",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Introduction to Java Programming\",\r\n  \"description\": \"This course provides an introduction to Java programming language.\",\r\n  \"author\": \"John Doe\",\r\n  \"durationInHours\": 40,\r\n  \"level\": \"BEGINNER\",\r\n  \"prerequisites\": [\"Basic understanding of programming concepts\"],\r\n  \"learningObjectives\": \"By the end of this course, students will be able to write basic Java programs.\",\r\n  \"topics\": [\"Introduction to Java\", \"Variables and Data Types\", \"Control Flow\", \"Object-Oriented Programming\"],\r\n  \"format\": \"Online\",\r\n  \"language\": \"English\",\r\n  \"keywords\": [\"Java\", \"Programming\", \"Beginner\"],\r\n  \"audience\": \"GENERAL\",\r\n  \"certificationAvailable\": true,\r\n  \"version\": \"1.0\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/course-mgmt/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"course-mgmt",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "course-mgmt | upload content",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Introduction to Java",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is a sample course material file",
+							"type": "text"
+						},
+						{
+							"key": "format",
+							"value": "jpg",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "postman-cloud:///1eef8156-7345-4a70-a827-e82afbe08fb4"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/course-mgmt/content/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"course-mgmt",
+						"content",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "course-mgmt | upload pdf",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Introduction to Java",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "This is a sample course material file",
+									"type": "text"
+								},
+								{
+									"key": "format",
+									"value": "pdf",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1eee9d92-5882-4b00-9ce4-583eb1f19699"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/course-mgmt/content/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"course-mgmt",
+								"content",
+								"1"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "course-mgmt | upload video",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Introduction to Java",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "This is a sample course material file",
+									"type": "text"
+								},
+								{
+									"key": "format",
+									"value": "mp4",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1eef8133-8767-4b20-8510-e0994538d57e"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/course-mgmt/content/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"course-mgmt",
+								"content",
+								"1"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "course-mgmt | upload jpg",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "Introduction to Java",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "This is a sample course material file",
+									"type": "text"
+								},
+								{
+									"key": "format",
+									"value": "jpg",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1eef8156-7345-4a70-a827-e82afbe08fb4"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/course-mgmt/content/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"course-mgmt",
+								"content",
+								"1"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "course-mgmt | update content",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Introduction to Java",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is a sample course material file",
+							"type": "text"
+						},
+						{
+							"key": "format",
+							"value": "png",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "postman-cloud:///1eeea988-fa9c-42e0-b2e5-a262cc5c6614"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/course-mgmt/content/1/5",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"course-mgmt",
+						"content",
+						"1",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "course-mgmt | delete content",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Introduction to Java",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is a sample course material file",
+							"type": "text"
+						},
+						{
+							"key": "format",
+							"value": "png",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "postman-cloud:///1eeea988-fa9c-42e0-b2e5-a262cc5c6614"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/course-mgmt/content/1/6",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"course-mgmt",
+						"content",
+						"1",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "courses | get contents by course id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Introduction to Java",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "This is a sample course material file",
+							"type": "text"
+						},
+						{
+							"key": "format",
+							"value": "png",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "postman-cloud:///1eeea988-fa9c-42e0-b2e5-a262cc5c6614"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/courses/content/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"courses",
+						"content",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Media",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Range",
+						"value": "bytes=0-",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/media/21",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"21"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:8089",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "Bearer {{at-teacher}}",
+			"type": "string"
+		},
+		{
+			"key": "at-teacher",
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1aWQiOjAsInN1YiI6InRlYWNoZXJAZXhhbXBsZS5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImVtaWQiOiJaRWRXYUZreWFHeGphMEpzWlVkR2RHTkhlR3hNYlU1MllsRTlQUT09IiwidHlwZSI6ImF1dGgiLCJleHAiOjE3MTI5MzM0MzgsImlhdCI6MTcxMjg0NzAzOH0.0J2Lg3RI6p6dLo9hJXvrmeEkXvaJ7FqZv2V1azzsLf6QXXVuob8jarV2VH_FN9hB6-PHFZCl4DQ1SorV40ZYMQ",
+			"type": "string"
+		},
+		{
+			"key": "at-student",
+			"value": "eyJhbGciOiJIUzUxMiJ9.eyJ1aWQiOjAsInN1YiI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJyb2xlIjoiU1RVREVOVCIsImVtaWQiOiJXbGhvYUdKWVFuTmFWVUpzWlVkR2RHTkhlR3hNYlU1MllsRTlQUT09IiwidHlwZSI6ImF1dGgiLCJleHAiOjE3MTE0NTcyOTIsImlhdCI6MTcxMTM3MDg5Mn0.rM6v2qe_YgtLY3K04Z8JW7WDEa6SZpSjXsjKPj6KRzxxrPppcmBD9LqApApjtF5gUfCogzyPZOXUnbV1wn86jg",
+			"type": "string"
+		}
+	]
+}

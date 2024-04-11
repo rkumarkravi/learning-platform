@@ -2,9 +2,9 @@ package com.rk.olms.filters;
 
 import com.rk.olms.configs.security.SecurityUserDetails;
 import com.rk.olms.dtos.ResponseDto;
+import com.rk.olms.exception.JwtTokenExpiredException;
 import com.rk.olms.services.SecurityUserDetailService;
 import com.rk.olms.utils.JWTUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -52,7 +51,7 @@ public class CustomFilterForAuthorization extends OncePerRequestFilter {
                 Boolean isTokenExpired = jwtUtility.isTokenExpired(token);
 
                 if(isTokenExpired){
-                    throw new Exception("Token Expired, generate new token");
+                    throw new JwtTokenExpiredException("Token Expired, generate new token");
                 }
             }
 

@@ -23,6 +23,8 @@ public class SecurityUserDetailService implements UserDetailsService {
         Optional<UserEntity> userEntityOptional = userRepository.findByUsernameOrEmail(username);
         if (userEntityOptional.isPresent()) {
             securityUserDetails = new SecurityUserDetails(userEntityOptional.get());
+        } else {
+            throw new UsernameNotFoundException("Wrong Credentials!");
         }
         return securityUserDetails;
     }

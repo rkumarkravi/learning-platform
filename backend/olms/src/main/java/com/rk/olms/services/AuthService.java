@@ -10,12 +10,15 @@ import com.rk.olms.dtos.requests.UserRegisterReqDto;
 import com.rk.olms.dtos.responses.RenewTknResDto;
 import com.rk.olms.dtos.responses.UserLoginResDto;
 import com.rk.olms.dtos.responses.UserRegisterResDto;
+import com.rk.olms.dtos.responses.ValidTknResDto;
+import com.rk.olms.exception.JwtTokenExpiredException;
 import com.rk.olms.utils.JWTUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -113,8 +116,8 @@ public class AuthService {
             int uid = (int)claimsRt.get("uid");
             claimsRt.put("uid",++uid);
 
-            String rt=jwtUtil.updateRefreshToken(renewTknReqDto.getRt(),claimsRt);
-            String at=jwtUtil.doGenerateAuthToken(claimsRt.getSubject(),claimsRt);
+            String rt = jwtUtil.updateRefreshToken(renewTknReqDto.getRt(), claimsRt);
+            String at = jwtUtil.doGenerateAuthToken(claimsRt.getSubject(), claimsRt);
             renewTknResDto.setAt(at);
             renewTknResDto.setRt(rt);
 
@@ -123,6 +126,22 @@ public class AuthService {
             responseDto.setRs("Token Refreshed!");
         }
 
+        return responseDto;
+    }
+
+    public Object validateTkn(String at) throws JwtTokenExpiredException {
+        ResponseDto<ValidTknResDto> responseDto = new ResponseDto<>();
+        boolean isTokenExpired = jwtUtil.isTokenExpired(at);
+        ValidTknResDto.ValidTknResDtoBuilder validTknResDto = ValidTknResDto.builder().isValid(isTokenExpired);
+        if (isTokenExpired) {
+            throw new JwtTokenExpiredException("Token Expired");
+        } else {
+            SecurityUserDetails userDetails = (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            validTknResDto.userDetails(new UserLoginResDto(userDetails.getUserEntity()));
+        }
+        responseDto.setRs("S");
+        responseDto.setRd("Token Valid!");
+        responseDto.setPayload(validTknResDto.build());
         return responseDto;
     }
 }

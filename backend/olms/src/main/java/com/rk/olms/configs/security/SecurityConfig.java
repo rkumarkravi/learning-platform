@@ -17,27 +17,44 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
     private static final String[] publicApis = {
             "/auth/login",
             "/auth/register",
-            "/auth/renewTkn"
+            "/auth/renewTkn",
+            "/auth/validTkn",
+            "/media/*"
     };
 
     private final SecurityUserDetailService userService;
     private final CustomFilterForAuthorization customFilterForAuthorization;
+
     public SecurityConfig(SecurityUserDetailService userService, CustomFilterForAuthorization customFilterForAuthorization) {
         this.userService = userService;
         this.customFilterForAuthorization = customFilterForAuthorization;
     }
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(publicApis);
     }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("http://localhost:*")
+                .allowedMethods("*")
+                .allowedHeaders("*")
+                .allowCredentials(false)
+                .maxAge(3600);
+    }
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

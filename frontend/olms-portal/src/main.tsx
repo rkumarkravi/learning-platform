@@ -1,8 +1,25 @@
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import AuthLayout from './pages/auth/AuthLayout.tsx';
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import AuthLayout from "./pages/auth/AuthLayout.tsx";
+import MainLayout from "./pages/main/MainLayout.tsx";
+import { ToastProvider } from "./components/ui/toast.tsx";
+import { createContext, useContext, useState } from "react";
+import React from "react";
+
+const DataContext = createContext({});
+
+export const DataProvider = ({ children }) => {
+  const [data, setData] = useState({}); // Initial data state
+
+  return (
+    <DataContext.Provider value={{ data, setData }}>
+      {children}
+    </DataContext.Provider>
+  );
+};
+export const useData = () => useContext(DataContext);
 
 const router = createBrowserRouter([
   {
@@ -12,7 +29,11 @@ const router = createBrowserRouter([
     children: [
       {
         element: <AuthLayout />,
-        index: true
+        index: true,
+      },
+      {
+        element: <MainLayout />,
+        path: "/main",
       },
       // {
       //   element: <CreateRecipeV3 />,
@@ -27,9 +48,15 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   // <React.StrictMode>
   //   <App />
   // </React.StrictMode>,
-  <RouterProvider router={router}/>
-)
+  <React.StrictMode>
+    <DataProvider>
+      <ToastProvider>
+        <RouterProvider router={router} />
+      </ToastProvider>
+    </DataProvider>
+  </React.StrictMode>
+);

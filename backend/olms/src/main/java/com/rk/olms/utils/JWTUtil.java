@@ -69,7 +69,7 @@ public class JWTUtil implements Serializable {
         return claims;
     }
 
-    //check if the token has expired
+    //check if the token has expired will return true if expired else false
     public Boolean isTokenExpired(String token) {
         try {
             final Date expiration = getExpirationDateFromToken(token);
