@@ -5,21 +5,10 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import AuthLayout from "./pages/auth/AuthLayout.tsx";
 import MainLayout from "./pages/main/MainLayout.tsx";
 import { ToastProvider } from "./components/ui/toast.tsx";
-import { createContext, useContext, useState } from "react";
 import React from "react";
-
-const DataContext = createContext({});
-
-export const DataProvider = ({ children }) => {
-  const [data, setData] = useState({}); // Initial data state
-
-  return (
-    <DataContext.Provider value={{ data, setData }}>
-      {children}
-    </DataContext.Provider>
-  );
-};
-export const useData = () => useContext(DataContext);
+import { ThemeProvider } from "./components/ThemeProvider.tsx";
+import store from "./store/LmsStore.tsx";
+import { Provider } from 'react-redux';
 
 const router = createBrowserRouter([
   {
@@ -49,14 +38,13 @@ const router = createBrowserRouter([
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  // <React.StrictMode>
-  //   <App />
-  // </React.StrictMode>,
   <React.StrictMode>
-    <DataProvider>
-      <ToastProvider>
-        <RouterProvider router={router} />
-      </ToastProvider>
-    </DataProvider>
+    <Provider store={store}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </ThemeProvider>
+    </Provider>
   </React.StrictMode>
 );

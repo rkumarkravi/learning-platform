@@ -23,7 +23,6 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class CourseMediaService {
-    public static final String VIDEO_FILE_PATH = "C:\\Users\\errku\\Videos\\2023-11-16 12-40-06.mp4";
     @Value("${file.upload.dir}")
     String fileUploadDir;
     private final CourseContentRepository courseContentRepository;
@@ -48,9 +47,35 @@ public class CourseMediaService {
                 response = getPdfContent(contentPath);
             } else if ("jpg".equals(format) || "jpeg".equals(format)) {
                 response = getImageContent(contentPath);
+            } else if ("ppt".equals(format)) {
+                response = getPdfContent(contentPath);
             }
         }
         return response;
+    }
+
+    public Mono<ResponseEntity<Resource>> getPpt(String path) {
+        return Mono.fromCallable(() -> {
+            try {
+                // Load the PowerPoint file from the file system
+                File pptFile = new File(path); // Update with your actual PowerPoint file path
+                FileInputStream fileInputStream = new FileInputStream(pptFile);
+
+                // Create an InputStreamResource from the PowerPoint file input stream
+                InputStreamResource inputStreamResource = new InputStreamResource(fileInputStream);
+
+                // Set the appropriate headers for PowerPoint content
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.valueOf("application/vnd.ms-powerpoint")); // Adjust MediaType as per your PowerPoint file type
+                headers.setContentLength(pptFile.length());
+
+                // Return the ResponseEntity with the InputStreamResource and headers
+                return new ResponseEntity<>(inputStreamResource, headers, HttpStatus.OK);
+            } catch (IOException e) {
+                // Handle IOException if file loading fails
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        });
     }
 
     public Object getImageContent(String path) {

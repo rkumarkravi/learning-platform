@@ -1,12 +1,10 @@
 import axios from 'axios';
 
 const apiBaseUrl = 'http://localhost:8089'; // Replace with your API base URL
-
+const authorizationBypass=['/auth/login','/auth/register']
 const axiosService = async (method:string, url:string, req:unknown = null,headers:any={}) => {
-  // const { data, setData } = useData();
-  // setData({ ...data, loader: true });
   try {
-    if(!headers['Authorization'] && localStorage.getItem("at")){
+    if(!authorizationBypass.some(x=>url.indexOf(x)>-1) && !headers['Authorization'] && localStorage.getItem("at")){
       headers['Authorization']=`Bearer ${localStorage.getItem("at")}`;
     }
     const response = await axios({

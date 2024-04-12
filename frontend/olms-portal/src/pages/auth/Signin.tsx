@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useData } from "@/main";
 import axiosService from "@/services/Axios";
+import { put } from "@/store/newway/user-profile-slice";
+// import { setUserProfile } from "@/store/oldway/LmsActions";
+// import { RootState } from "@/store/oldway/LmsReducers";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
-  const { data, setData } = useData();
+  const dispatch = useDispatch();
   const {toast} = useToast();
   const navigate = useNavigate();
   const initData={email:"",password:""};
@@ -34,7 +37,7 @@ const Signin = () => {
         });
         
         x.payload.auth="SIGN";
-        setData({ ...data, userDetail: x.payload });
+        dispatch(put(x.payload));
         navigate("/main",{state:x});
       }else{
         toast({
