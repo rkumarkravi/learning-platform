@@ -9,9 +9,11 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export function Menus() {
+  const userProfile = useSelector((state: any) => state.userProfile.value);
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   function setThemeMenu(event: Theme) {
@@ -22,15 +24,30 @@ export function Menus() {
     navigate(path);
   }
 
+  function logout(arg0: string): void {
+    localStorage.removeItem("at");
+    navigateToPath(arg0);
+  }
+
+  function navigateToDashboard(): void {
+    if (userProfile && userProfile.role === "TEACHER") navigate("creator");
+    else navigate("student");
+  }
+
   return (
     <Menubar className="m-2">
       <MenubarMenu>
-        <MenubarTrigger >Profile</MenubarTrigger>
+        <MenubarTrigger>Profile</MenubarTrigger>
         <MenubarContent>
+          <MenubarItem onClick={() => navigateToDashboard()}>
+            Dashboard
+          </MenubarItem>
           <MenubarItem>Profile Settings</MenubarItem>
-          <MenubarItem onClick={()=>navigateToPath("/viewProfile")}>View Profile</MenubarItem>
+          <MenubarItem onClick={() => navigateToPath("viewProfile")}>
+            View Profile
+          </MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>Logout</MenubarItem>
+          <MenubarItem onClick={() => logout("/")}>Logout</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
       <MenubarMenu>

@@ -9,6 +9,9 @@ import React from "react";
 import { ThemeProvider } from "./components/ThemeProvider.tsx";
 import store from "./store/LmsStore.tsx";
 import { Provider } from 'react-redux';
+import ViewProfile from "./reusables/ViewProfile.tsx";
+import MainStudent from "./pages/main/MainStudent.tsx";
+import MainTeacher from "./pages/main/MainTeacher.tsx";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +25,21 @@ const router = createBrowserRouter([
       },
       {
         element: <MainLayout />,
-        path: "/main",
+        path: "main",
+        children:[
+          {
+            element: <MainStudent />,
+            path: "student",
+          },
+          {
+            element: <MainTeacher />,
+            path: "creator",
+          },
+          {
+            element: <ViewProfile />,
+            path: "viewProfile",
+          },
+        ]
       },
       // {
       //   element: <CreateRecipeV3 />,

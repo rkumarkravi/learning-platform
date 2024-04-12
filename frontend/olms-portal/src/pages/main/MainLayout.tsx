@@ -1,7 +1,7 @@
 import { ApiResponse } from "@/models/Response";
 import axiosService from "@/services/Axios";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import MainStudent from "./MainStudent";
 import MainTeacher from "./MainTeacher";
 import { Menus } from "./main-comps/Menus";
@@ -20,36 +20,42 @@ function MainLayout() {
       localStorage.setItem("at", state.payload.at);
       localStorage.setItem("rt", state.payload.rt);
       dispatch(put(state.payload));
-      return;
-    }
-    if (!(localStorage.getItem("at") && localStorage.getItem("rt"))) {
-      localStorage.removeItem("at");
-      localStorage.removeItem("rt");
-      dispatch(remove());
-      navigate("/");
+      getLayoutByRole();
       return;
     } else {
-      // const at = localStorage.getItem("at");
-      // console.log("at iis ::", at);
-      // const auth = { "Authorization": `Bearer ${at}` };
-      axiosService("POST", "/auth/validTkn", {}).then((x: ApiResponse) => {
-        if (x && x.rs === "F") {
-          navigate("/");
-          return;
-        } else {
-          if (!userProfile) {
-            x.payload.userDetails.auth = "MAIN";
-            dispatch(put(x.payload.userDetails));
+      if (!(localStorage.getItem("at") && localStorage.getItem("rt"))) {
+        localStorage.removeItem("at");
+        localStorage.removeItem("rt");
+        dispatch(remove());
+        navigate("/");
+        return;
+      } else {
+        // const at = localStorage.getItem("at");
+        // console.log("at iis ::", at);
+        // const auth = { "Authorization": `Bearer ${at}` };
+        axiosService("POST", "/auth/validTkn", {}).then((x: ApiResponse) => {
+          if (x && x.rs === "F") {
+            navigate("/");
+            return;
+          } else {
+            if (Object.entries(userProfile).length === 0) {
+              x.payload.userDetails.auth = "MAIN";
+              dispatch(put(x.payload.userDetails));
+              getLayoutByRole();
+            }
           }
-        }
-      });
+        });
+      }
+      if (Object.entries(userProfile).length > 0) {
+        getLayoutByRole();
+      }
     }
-  }, [dispatch]);
+  }, [dispatch, navigate]);
 
   function getLayoutByRole() {
-    if (userProfile && userProfile.role === "TEACHER")
-      return <MainTeacher />;
-    else return <MainStudent />;
+    console.log(userProfile);
+    if (userProfile && userProfile.role === "TEACHER") navigate("creator");
+    else navigate("student");
   }
 
   // const [expanded, setExpanded] = useState(true);
@@ -80,9 +86,11 @@ function MainLayout() {
         <ModeToggle />
       </div> */}
       <div className="absolute top-1 left-1">
-        <Menus/>
+        <Menus />
       </div>
-      <div className="min-h-lvh">{getLayoutByRole()}{JSON.stringify(userProfile)}</div>
+      <div className="min-h-lvh">
+        <Outlet />
+      </div>
     </div>
   );
 }

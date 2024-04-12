@@ -1,7 +1,8 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 const ViewProfile: React.FC = () => {
-
+const data = useSelector((state: any) => state.userProfile.value);
   return (
     <div>
       <h2>User Profile</h2>
