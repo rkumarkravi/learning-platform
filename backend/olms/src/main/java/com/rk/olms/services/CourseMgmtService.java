@@ -1,9 +1,11 @@
 package com.rk.olms.services;
 
+import com.rk.olms.configs.security.SecurityUserDetails;
 import com.rk.olms.daos.models.CourseContentEntity;
 import com.rk.olms.daos.models.CourseEntity;
 import com.rk.olms.daos.repos.CourseContentRepository;
 import com.rk.olms.daos.repos.CourseRepository;
+import com.rk.olms.daos.repos.UserRepository;
 import com.rk.olms.dtos.ResponseDto;
 import com.rk.olms.dtos.requests.CourseContentReqDto;
 import com.rk.olms.dtos.requests.CourseReqDto;
@@ -12,6 +14,7 @@ import com.rk.olms.dtos.requests.FileUploadReqDto;
 import com.rk.olms.dtos.responses.CourseContentResDto;
 import com.rk.olms.dtos.responses.CourseResDto;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,19 +27,23 @@ public class CourseMgmtService {
     String fileUploadDir;
 
     private final CourseRepository courseRepository;
-
+    private final UserRepository userRepository;
     private final CourseContentRepository courseContentRepository;
     private final FileUploadService fileUploadService;
 
-    public CourseMgmtService(CourseRepository courseRepository, CourseContentRepository courseContentRepository, FileUploadService fileUploadService) {
+    public CourseMgmtService(CourseRepository courseRepository, UserRepository userRepository, CourseContentRepository courseContentRepository, FileUploadService fileUploadService) {
         this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
         this.courseContentRepository = courseContentRepository;
         this.fileUploadService = fileUploadService;
     }
 
     public ResponseDto<CourseResDto> createCourseMetaData(CourseReqDto courseReqDto) {
+        SecurityUserDetails userDetails = (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseDto<CourseResDto> responseDto = new ResponseDto<>();
         CourseEntity courseEntity = new CourseEntity(courseReqDto);
+        courseEntity.setAuthor(userDetails.getUserEntity().getFullName());
+        courseEntity.setUserEntity(userDetails.getUserEntity());
         courseEntity = courseRepository.save(courseEntity);
 
         responseDto.setRs("S");
