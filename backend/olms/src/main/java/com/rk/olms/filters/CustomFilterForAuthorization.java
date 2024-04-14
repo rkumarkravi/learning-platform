@@ -11,7 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -73,6 +75,9 @@ public class CustomFilterForAuthorization extends OncePerRequestFilter {
             }
         } catch (Exception ex) {
             log.error("exception is ::", ex);
+            if(ex instanceof JwtTokenExpiredException || ex instanceof BadCredentialsException){
+                httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+            }
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
             ResponseDto<String> exceptionResponse = new ResponseDto<>();
             exceptionResponse.setRd(ex.getMessage());
