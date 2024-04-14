@@ -1,7 +1,9 @@
+import { ToastAction } from '@/components/ui/toast';
+import { toast } from '@/components/ui/use-toast';
 import axios from 'axios';
 
 const apiBaseUrl = 'http://localhost:8089'; // Replace with your API base URL
-const authorizationBypass=['/auth/login','/auth/register']
+const authorizationBypass=['/auth/login','/auth/register'];
 const axiosService = async (method:string, url:string, req:unknown = null,headers:any={}) => {
   try {
     if(!authorizationBypass.some(x=>url.indexOf(x)>-1) && !headers['Authorization'] && localStorage.getItem("at")){
@@ -15,12 +17,18 @@ const axiosService = async (method:string, url:string, req:unknown = null,header
     });
     // setData({ ...data, loader: false });
     return response.data;
-  } catch (error) {
+  } catch (error:any) {
     // Handle error
     // setData({ ...data, loader: false });
-    console.error('Axios error:', error);
+    toast({variant: "destructive",
+      description: error.response && error.response.data?error.response.data.rd:error.message,
+      action:(<ToastAction altText="Ok">OK</ToastAction>),
+    });
+    // console.error('Axios error:', error);
     throw error;
   }
 };
+
+
 
 export default axiosService;

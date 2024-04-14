@@ -12,6 +12,7 @@ import { Provider } from 'react-redux';
 import ViewProfile from "./reusables/ViewProfile.tsx";
 import MainStudent from "./pages/main/MainStudent.tsx";
 import MainTeacher from "./pages/main/MainTeacher.tsx";
+import CreateCourse from "./pages/main/teacher-comps/create-course/CreateCourse.tsx";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,9 @@ const router = createBrowserRouter([
           {
             element: <ViewProfile />,
             path: "viewProfile",
+          },{
+            element: <CreateCourse />,
+            path: "createCourse",
           },
         ]
       },
@@ -55,13 +59,11 @@ const router = createBrowserRouter([
   },
 ]);
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <ToastProvider>
           <RouterProvider router={router} />
-        </ToastProvider>
       </ThemeProvider>
     </Provider>
-  </React.StrictMode>
+  //  </React.StrictMode> 
 );

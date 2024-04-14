@@ -2,31 +2,24 @@ import React, { useEffect, useState } from "react";
 import Signin from "./Signin";
 import Signup from "./Signup";
 import { Button } from "@/components/ui/button";
-import axiosService from "@/services/Axios";
-import { ApiResponse } from "@/models/Response";
 import { useNavigate } from "react-router-dom";
+import useAuthorization from "@/hooks/useAuthorization";
 
 const AuthLayout: React.FC = () => {
   const [isSignin, setIsSignin] = useState(true);
   const [currentCl, setCurrentCl] = useState(0);
   const navigate = useNavigate();
+  const { isAuthorized, loading } = useAuthorization();
 
   function handleChange(): void {
     setIsSignin(!isSignin);
   }
 
   useEffect(()=>{
-    const at = localStorage.getItem("at");
-    if (at) {
-      const auth = { "Authorization": `Bearer ${at}` };
-      axiosService("POST", "/auth/validTkn",{},auth).then((x: ApiResponse) => {
-        if (x.rs === "S") {
-          navigate("/main");
-          return;
-        }
-      });
+    if (isAuthorized) {
+      navigate("/main");
     }
-  },[])
+  },[isAuthorized])
 
   useEffect(() => {
     const intervalId = setInterval(() => {

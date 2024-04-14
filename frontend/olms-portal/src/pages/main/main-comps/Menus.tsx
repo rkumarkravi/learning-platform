@@ -12,7 +12,7 @@ import {
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-export function Menus() {
+export function Menus( {className}) {
   const userProfile = useSelector((state: any) => state.userProfile.value);
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export function Menus() {
   }
 
   return (
-    <Menubar className="m-2">
+    <Menubar className={className}>
       <MenubarMenu>
         <MenubarTrigger>Profile</MenubarTrigger>
         <MenubarContent>
@@ -53,7 +53,7 @@ export function Menus() {
       <MenubarMenu>
         <MenubarTrigger>Course</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem>New Course</MenubarItem>
+          <MenubarItem onClick={() => navigateToPath("createCourse")}>New Course</MenubarItem>
           <MenubarItem>Update Course Material</MenubarItem>
           <MenubarItem>Add Quizzes</MenubarItem>
           <MenubarSeparator />
@@ -107,7 +107,7 @@ export function Menus() {
           <MenubarItem inset>Hide Sidebar</MenubarItem>
         </MenubarContent>
       </MenubarMenu> */}
-      <MenubarMenu>
+      {/* <MenubarMenu>
         <MenubarTrigger>Theme</MenubarTrigger>
         <MenubarContent>
           <MenubarRadioGroup value={theme} onValueChange={setThemeMenu}>
@@ -116,7 +116,7 @@ export function Menus() {
             <MenubarRadioItem value="system">System</MenubarRadioItem>
           </MenubarRadioGroup>
         </MenubarContent>
-      </MenubarMenu>
+      </MenubarMenu> */}
     </Menubar>
   );
 }

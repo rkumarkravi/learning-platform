@@ -1,12 +1,11 @@
-import { ApiResponse } from "@/models/Response";
-import axiosService from "@/services/Axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import MainStudent from "./MainStudent";
-import MainTeacher from "./MainTeacher";
 import { Menus } from "./main-comps/Menus";
 import { useDispatch, useSelector } from "react-redux";
-import { put, remove } from "@/store/newway/user-profile-slice";
+import { put } from "@/store/newway/user-profile-slice";
+import { ModeToggle } from "@/reusables/ModeToggle";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import useAuthorization from "@/hooks/useAuthorization";
 // import { setUserProfile } from "@/store/oldway/LmsActions";
 // import { RootState } from "@/store/oldway/LmsReducers";
 
@@ -15,49 +14,31 @@ function MainLayout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { state } = useLocation();
+  const { isAuthorized, loading } = useAuthorization();
   useEffect(() => {
     if (state && state.rs === "S") {
       localStorage.setItem("at", state.payload.at);
       localStorage.setItem("rt", state.payload.rt);
       dispatch(put(state.payload));
-      getLayoutByRole();
-      return;
     } else {
-      if (!(localStorage.getItem("at") && localStorage.getItem("rt"))) {
-        localStorage.removeItem("at");
-        localStorage.removeItem("rt");
-        dispatch(remove());
-        navigate("/");
-        return;
-      } else {
-        // const at = localStorage.getItem("at");
-        // console.log("at iis ::", at);
-        // const auth = { "Authorization": `Bearer ${at}` };
-        axiosService("POST", "/auth/validTkn", {}).then((x: ApiResponse) => {
-          if (x && x.rs === "F") {
-            navigate("/");
-            return;
-          } else {
-            if (Object.entries(userProfile).length === 0) {
-              x.payload.userDetails.auth = "MAIN";
-              dispatch(put(x.payload.userDetails));
-              getLayoutByRole();
-            }
-          }
-        });
-      }
-      if (Object.entries(userProfile).length > 0) {
-        getLayoutByRole();
+      if (isAuthorized && Object.entries(userProfile).length > 0) {
+        if (userProfile && userProfile.role === "TEACHER") {
+          navigate("creator");
+        } else {
+          navigate("student");
+        }
       }
     }
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate, state, userProfile, isAuthorized]);
 
-  function getLayoutByRole() {
-    console.log(userProfile);
-    if (userProfile && userProfile.role === "TEACHER") navigate("creator");
-    else navigate("student");
+  function getAvatarFallBack() {
+    if (userProfile && userProfile.fullName)
+      return userProfile.fullName
+        .split(" ")
+        .map((x) => x[0])
+        .join("");
+    else return "";
   }
-
   // const [expanded, setExpanded] = useState(true);
 
   // // const toggleExpand = () => {
@@ -65,7 +46,7 @@ function MainLayout() {
   // // };
 
   return (
-    <div>
+    <div className="flex flex-col">
       {/* <div
         className={cn(
           `${
@@ -85,10 +66,18 @@ function MainLayout() {
         </Button>
         <ModeToggle />
       </div> */}
-      <div className="absolute top-1 left-1">
-        <Menus />
+
+      <div className="flex justify-between p-2 gap-1">
+        <div className="flex gap-2">
+          <Avatar>
+            <AvatarFallback>{getAvatarFallBack()}</AvatarFallback>
+          </Avatar>
+
+          <Menus className="w-min" />
+        </div>
+        <ModeToggle />
       </div>
-      <div className="min-h-lvh">
+      <div className="min-h-lvh p-2">
         <Outlet />
       </div>
     </div>
