@@ -41,11 +41,11 @@ public class CourseMediaService {
 
             log.info("content Path is :{}", contentPath);
 
-            if ("mp4".equals(format)) {
+            if ("mp4".equals(format) || "video".equals(format)) {
                 response = getVideoContent(contentPath, request);
             } else if ("pdf".equals(format)) {
                 response = getPdfContent(contentPath);
-            } else if ("jpg".equals(format) || "jpeg".equals(format)) {
+            } else if ("jpg".equals(format) || "jpeg".equals(format) || "img".equals(format)) {
                 response = getImageContent(contentPath);
             } else if ("ppt".equals(format)) {
                 response = getPdfContent(contentPath);

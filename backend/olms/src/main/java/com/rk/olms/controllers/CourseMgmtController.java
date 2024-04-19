@@ -40,4 +40,9 @@ public class CourseMgmtController {
         return courseMgmtService.deleteCourseContent(courseId, contentId);
     }
 
+    @DeleteMapping("/content/media/{contentId}")
+    public ResponseDto<Void> deleteCourse(@PathVariable("contentId") Long contentId) {
+        return courseMgmtService.deleteMedia(contentId);
+    }
+
 }

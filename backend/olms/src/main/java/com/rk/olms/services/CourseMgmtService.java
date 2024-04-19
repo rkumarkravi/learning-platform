@@ -104,15 +104,26 @@ public class CourseMgmtService {
             CourseContentEntity cce = courseContentOpt.get();
             FileDeleteReqDto fileDeleteReqDto = new FileDeleteReqDto();
             fileDeleteReqDto.setCourseId(cce.getCourse().getCourseId());
-            fileDeleteReqDto.setFilePath(fileUploadDir + "/" + cce.getContentUrl());
-            ResponseDto<String> fileDeleteRes = fileUploadService.deleteFile(fileDeleteReqDto);
+            ResponseDto<String> fileDeleteRes=new ResponseDto<>();
+            if(!courseContentReqDto.getFile().isEmpty()) {
+                fileDeleteReqDto.setFilePath(fileUploadDir + "/" + cce.getContentUrl());
+                fileDeleteRes = fileUploadService.deleteFile(fileDeleteReqDto);
+            }else{
+                fileDeleteRes.setRs("S");
+            }
 
             if ("S".equals(fileDeleteRes.getRs())) {
-                FileUploadReqDto strategyReqDto = new FileUploadReqDto();
-                strategyReqDto.setCourseId(cce.getCourse().getCourseId());
-                strategyReqDto.setFile(courseContentReqDto.getFile());
-                strategyReqDto.setFilePath(fileUploadDir);
-                ResponseDto<String> uploadRes = fileUploadService.uploadFile(strategyReqDto);
+                ResponseDto<String> uploadRes =new ResponseDto<>();
+                if(!courseContentReqDto.getFile().isEmpty()) {
+                    FileUploadReqDto strategyReqDto = new FileUploadReqDto();
+                    strategyReqDto.setCourseId(cce.getCourse().getCourseId());
+                    strategyReqDto.setFile(courseContentReqDto.getFile());
+                    strategyReqDto.setFilePath(fileUploadDir);
+                   uploadRes = fileUploadService.uploadFile(strategyReqDto);
+                }else {
+                    uploadRes.setRs("S");
+                    uploadRes.setPayload(courseContentOpt.get().getContentUrl());
+                }
                 if ("S".equals(uploadRes.getRs())) {
 
                     cce.setContentUrl(uploadRes.getPayload());
@@ -149,7 +160,24 @@ public class CourseMgmtService {
         return responseDto;
     }
 
-    public ResponseDto<CourseContentResDto> deleteCourseContent(long courseId, long contentId) {
+    public ResponseDto<Void> deleteMedia(long contentId) {
+        ResponseDto<Void> responseDto = new ResponseDto<>();
+        Optional<CourseContentEntity> courseContentOpt = courseContentRepository.findById(contentId);
+        if (courseContentOpt.isPresent()) {
+            CourseContentEntity courseContent=courseContentOpt.get();
+            courseContent.setContentUrl("NA");
+            courseContent.setFormat("NA");
+
+            courseContentRepository.save(courseContent);
+            responseDto.setRs("S");
+            responseDto.setRd("Media deleted successfully!");
+        }else {
+            responseDto.setRd("Invalid Content Id!");
+        }
+        return responseDto;
+    }
+
+        public ResponseDto<CourseContentResDto> deleteCourseContent(long courseId, long contentId) {
         ResponseDto<CourseContentResDto> responseDto = new ResponseDto<>();
 
         Optional<CourseContentEntity> courseContentOpt = courseContentRepository.findById(contentId);
