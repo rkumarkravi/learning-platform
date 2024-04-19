@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import axiosService from "@/services/Axios";
 import { put } from "@/store/newway/user-profile-slice";
@@ -36,9 +37,12 @@ const Signin = () => {
           description: `Welcome ${x.payload.fullName}`
         });
         
+        localStorage.setItem("at", x.payload.at);
+        localStorage.setItem("rt", x.payload.rt);
+        
         x.payload.auth="SIGN";
         dispatch(put(x.payload));
-        navigate("/main",{state:x});
+        navigate("main",{state:x});
       }else{
         toast({
           title: "Auth",
@@ -59,7 +63,7 @@ const Signin = () => {
           >
             Email
           </label>
-          <input
+          <Input
             type="email"
             id="email"
             name="email"
@@ -76,7 +80,7 @@ const Signin = () => {
           >
             Password
           </label>
-          <input
+          <Input
             type="password"
             id="password"
             name="password"

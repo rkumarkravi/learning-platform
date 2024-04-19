@@ -11,36 +11,68 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, useForm } from "react-hook-form";
+import { Form, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { ApiResponse } from "@/models/Response";
 import axiosService from "@/services/Axios";
 import { toast } from "@/components/ui/use-toast";
-function CourseMetaDataForm({ className = "" }) {
+import { useDispatch, useSelector } from "react-redux";
+import { setValue } from "@/store/newway/key-value-slice";
+import { useEffect } from "react";
+function CourseMetaDataForm({ className = "",cid,mode="CREATE"}) {
+
+  const keyValue = useSelector((state: any) => state.keyValue.data);
+  const dispatch = useDispatch();
+
+  const callForUpdate=async()=>{
+    if(mode==='UPDATE' && cid){
+      const response: ApiResponse = await axiosService(
+        "POST",
+        `/courses/${cid}`,
+        {}
+      );
+      if (response.rs === "S") {
+        dispatch(setValue({key:"courseMetaData",value:response.payload}));
+      }
+    }
+  }
+
+  useEffect(()=>{callForUpdate();},[]);
+
+  useEffect(()=>{
+    
+    if(keyValue && keyValue.courseMetaData){
+        for (const key in keyValue.courseMetaData) {
+          form.setValue(key, keyValue.courseMetaData[key]);
+        }
+    }
+  },[keyValue])
+
   const formSchema = z.object({
     title: z.string().min(10, "Title is required!"),
-    description: z.string().min(10),
-    author: z.string(),
+    description: z.string().min(10, "Description is required!"),
+    // author: z.string(),
     durationInHours: z.number().min(1), // Corrected to number type
-    level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),
+    level: z.string(),
     prerequisites: z.array(z.string().min(1)),
     learningObjectives: z.string().min(1),
     topics: z.array(z.string()).min(1),
-    format: z.enum(["Online", "In-person"]),
+    format: z.string(),
     language: z.string().min(1),
     keywords: z.array(z.string()).min(1),
-    audience: z.enum(["GENERAL", "STUDENT", "PROFESSIONAL"]),
+    audience: z.string(),
     certificationAvailable: z.boolean(),
     version: z.string(),
   });
 
+  type formSchemaType = z.infer<typeof formSchema>;
   // Create the form using useForm with zodResolver
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<formSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       description: "",
-      author: "",
+      // author: "",
       durationInHours: 0, // Provide a default value
       level: "BEGINNER",
       prerequisites: [],
@@ -55,17 +87,21 @@ function CourseMetaDataForm({ className = "" }) {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>, event: any) => {
-    event.preventDefault();
-    console.error("form.formState.errors", form.formState.errors);
-    console.log(values);
+  const onSubmit: SubmitHandler<formSchemaType> = async (
+    data: formSchemaType
+  ) => {
+    // event.preventDefault();
+    console.error("form.formState.errors",form.formState.dirtyFields, form.formState.isValid,form.formState.isDirty);
+    console.log(data, form.formState.isSubmitting);
     if (form.formState.isValid) {
+      // setTimeout(() => {}, 10000); 
       const response: ApiResponse = await axiosService(
         "POST",
         "/course-mgmt/create",
-        values
+        data
       );
       if (response.rs === "S") {
+        dispatch(setValue({key:"courseMetaData",value:response.payload}));
         toast({
           description: response.rd,
         });
@@ -73,21 +109,26 @@ function CourseMetaDataForm({ className = "" }) {
     }
   };
 
-  const formElementClass: string = "flex flex-col gap-5 items-start w-96";
+  const formElementClass: string = "flex flex-col gap-5 items-start w-full";
   const formErrorMessageClass: string = "text-red-400";
   function splitData(v: any) {
-    return !v ? v.split(",") : [];
+    console.log(v);
+    if(typeof v ==='object'){
+      return v.join(",");
+    }
+    return v && v.length > 0 ? v.split(",") : [];
   }
   return (
     <div className={className}>
       <Form
-        onSubmit={({ data, event }) => {
-          // console.log(data);
-          onSubmit(data, event);
-        }}
+        // onSubmit={({ data, event }) => {
+        //   // console.log(data);
+        //   onSubmit(data, event);
+        // }}
+        onSubmit={form.handleSubmit(onSubmit)}
         control={form.control}
       >
-        <div className="flex flex-col justify-evenly gap-5 sm:flex-row sm:flex-wrap sm:justify-start">
+        <div className="flex flex-col justify-evenly gap-5 sm:grid sm:grid-cols-2 sm:flex-row sm:flex-wrap sm:justify-start">
           <div className={formElementClass}>
             <Label>Title:</Label>
             <Textarea {...form.register("title")} className="h-full" />
@@ -118,7 +159,12 @@ function CourseMetaDataForm({ className = "" }) {
           </div>
           <div className={formElementClass}>
             <Label>Level:</Label>
-            <Select {...form.register("level")}>
+            <Select
+              defaultValue={form.getValues("level")}
+              onValueChange={(x) => {
+                form.setValue("level", x);
+              }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue
                   placeholder={`Select a ${form.register("level").name}`}
@@ -163,7 +209,12 @@ function CourseMetaDataForm({ className = "" }) {
           </div>
           <div className={formElementClass}>
             <Label>Format:</Label>
-            <Select {...form.register("format")}>
+            <Select
+              defaultValue={form.getValues("format")}
+              onValueChange={(x) => {
+                form.setValue("format", x);
+              }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue
                   placeholder={`Select a ${form.register("format").name}`}
@@ -187,7 +238,7 @@ function CourseMetaDataForm({ className = "" }) {
                 />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="GENERAL">English</SelectItem>
+                <SelectItem value="English">English</SelectItem>
               </SelectContent>
             </Select>
             <p className={formErrorMessageClass}>
@@ -207,7 +258,12 @@ function CourseMetaDataForm({ className = "" }) {
           </div>
           <div className={formElementClass}>
             <Label>Audience:</Label>
-            <Select {...form.register("audience")}>
+            <Select
+              defaultValue={form.getValues("audience")}
+              onValueChange={(x) => {
+                form.setValue("audience", x);
+              }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue
                   placeholder={`Select a ${form.register("audience").name}`}
@@ -215,8 +271,9 @@ function CourseMetaDataForm({ className = "" }) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="GENERAL">GENERAL</SelectItem>
-                <SelectItem value="STUDENT">STUDENT</SelectItem>
-                <SelectItem value="PROFESSIONAL">PROFESSIONAL</SelectItem>
+                <SelectItem value="STUDENTS">STUDENTS</SelectItem>
+                <SelectItem value="PROFESSIONALS">PROFESSIONALS</SelectItem>
+                <SelectItem value="EDUCATORS">EDUCATORS</SelectItem>
               </SelectContent>
             </Select>
             <p className={formErrorMessageClass}>
@@ -246,8 +303,12 @@ function CourseMetaDataForm({ className = "" }) {
           {/* //add elements above this only */}
           <div className={formElementClass}></div>
           <div className={formElementClass}>
-            <Button type="submit" className="w-36">
-              Submit
+            <Button
+              type="submit"
+              className="w-36"
+              disabled={form.formState.isSubmitting}
+            >
+              {mode?mode:"Submit"}
             </Button>
           </div>
         </div>

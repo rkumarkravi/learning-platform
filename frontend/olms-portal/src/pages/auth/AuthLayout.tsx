@@ -2,24 +2,14 @@ import React, { useEffect, useState } from "react";
 import Signin from "./Signin";
 import Signup from "./Signup";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import useAuthorization from "@/hooks/useAuthorization";
 
 const AuthLayout: React.FC = () => {
   const [isSignin, setIsSignin] = useState(true);
   const [currentCl, setCurrentCl] = useState(0);
-  const navigate = useNavigate();
-  const { isAuthorized, loading } = useAuthorization();
 
   function handleChange(): void {
     setIsSignin(!isSignin);
   }
-
-  useEffect(()=>{
-    if (isAuthorized) {
-      navigate("/main");
-    }
-  },[isAuthorized])
 
   useEffect(() => {
     const intervalId = setInterval(() => {

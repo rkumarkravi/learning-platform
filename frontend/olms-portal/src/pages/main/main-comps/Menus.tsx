@@ -9,11 +9,13 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { useSelector } from "react-redux";
+import { removeValue } from "@/store/newway/key-value-slice";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export function Menus( {className}) {
   const userProfile = useSelector((state: any) => state.userProfile.value);
+  const dispatch=useDispatch();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   function setThemeMenu(event: Theme) {
@@ -21,7 +23,10 @@ export function Menus( {className}) {
   }
 
   function navigateToPath(path: string) {
-    navigate(path);
+    // if(path==='createCourse'){
+    //   dispatch(removeValue({key:"createCourse"}));
+    // }
+    navigate(path,{replace:true});
   }
 
   function logout(arg0: string): void {
@@ -29,9 +34,9 @@ export function Menus( {className}) {
     navigateToPath(arg0);
   }
 
-  function navigateToDashboard(): void {
-    if (userProfile && userProfile.role === "TEACHER") navigate("creator");
-    else navigate("student");
+
+  function isAllowedForTeacher(){
+    return (userProfile && userProfile.role === "TEACHER");
   }
 
   return (
@@ -39,7 +44,7 @@ export function Menus( {className}) {
       <MenubarMenu>
         <MenubarTrigger>Profile</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem onClick={() => navigateToDashboard()}>
+          <MenubarItem onClick={() => navigate('/main')}>
             Dashboard
           </MenubarItem>
           <MenubarItem>Profile Settings</MenubarItem>
@@ -50,10 +55,10 @@ export function Menus( {className}) {
           <MenubarItem onClick={() => logout("/")}>Logout</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
-      <MenubarMenu>
+      { isAllowedForTeacher() && <MenubarMenu>
         <MenubarTrigger>Course</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem onClick={() => navigateToPath("createCourse")}>New Course</MenubarItem>
+          <MenubarItem onClick={() => navigate("createCourse",{state:{cid:"",mode:"CREATE"}})}>New Course</MenubarItem>
           <MenubarItem>Update Course Material</MenubarItem>
           <MenubarItem>Add Quizzes</MenubarItem>
           <MenubarSeparator />
@@ -61,6 +66,7 @@ export function Menus( {className}) {
           <MenubarItem>Course Analytics</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
+}
       {/* <MenubarMenu>
         <MenubarTrigger>Edit</MenubarTrigger>
         <MenubarContent>

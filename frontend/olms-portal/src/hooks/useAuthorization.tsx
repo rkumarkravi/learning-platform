@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import axiosService from "@/services/Axios";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +15,7 @@ const useAuthorization = () => {
     // Function to check authorization
     const checkAuthorization = async () => {
       try {
+        console.warn("Auth Hook Called!")
         // Call your API endpoint to check if the token is valid
         if (!(localStorage.getItem("at") && localStorage.getItem("rt"))) {
           localStorage.removeItem("at");
@@ -34,7 +34,7 @@ const useAuthorization = () => {
         if (response.rs === "S") {
           dispatch(put(response.payload.userDetails));
           setIsAuthorized(true);
-          navigate("/main");
+          navigate("/main")
         } else {
           navigate("/");
           setIsAuthorized(false);

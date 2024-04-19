@@ -1,36 +1,20 @@
-import { useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Menus } from "./main-comps/Menus";
 import { useDispatch, useSelector } from "react-redux";
-import { put } from "@/store/newway/user-profile-slice";
 import { ModeToggle } from "@/reusables/ModeToggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import useAuthorization from "@/hooks/useAuthorization";
+import { put } from "@/store/newway/user-profile-slice";
 // import { setUserProfile } from "@/store/oldway/LmsActions";
 // import { RootState } from "@/store/oldway/LmsReducers";
 
 function MainLayout() {
   const userProfile = useSelector((state: any) => state.userProfile.value);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { state } = useLocation();
-  const { isAuthorized, loading } = useAuthorization();
-  useEffect(() => {
-    if (state && state.rs === "S") {
-      localStorage.setItem("at", state.payload.at);
-      localStorage.setItem("rt", state.payload.rt);
-      dispatch(put(state.payload));
-    } else {
-      if (isAuthorized && Object.entries(userProfile).length > 0) {
-        if (userProfile && userProfile.role === "TEACHER") {
-          navigate("creator");
-        } else {
-          navigate("student");
-        }
-      }
-    }
-  }, [dispatch, navigate, state, userProfile, isAuthorized]);
+  // const dispatch = useDispatch();
+  // const { state } = useLocation();
 
+  // if (state && state.rs === "S") {
+   
+  // }
   function getAvatarFallBack() {
     if (userProfile && userProfile.fullName)
       return userProfile.fullName
