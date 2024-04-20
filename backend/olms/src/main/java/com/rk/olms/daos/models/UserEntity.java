@@ -29,6 +29,7 @@ public class UserEntity {
     @Column(unique = true)
     private String phoneNumber;
     private String interests;
+    @Enumerated(EnumType.STRING)
     private Role role;
     private boolean enabled=true;
 

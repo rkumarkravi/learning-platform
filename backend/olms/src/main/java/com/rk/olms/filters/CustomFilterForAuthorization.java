@@ -1,6 +1,8 @@
 package com.rk.olms.filters;
 
+import com.rk.olms.configs.security.SecurityUserDetails;
 import com.rk.olms.dtos.ResponseDto;
+import com.rk.olms.exception.JwtTokenExpiredException;
 import com.rk.olms.services.SecurityUserDetailService;
 import com.rk.olms.utils.JWTUtil;
 import jakarta.servlet.FilterChain;
@@ -9,10 +11,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -46,10 +49,16 @@ public class CustomFilterForAuthorization extends OncePerRequestFilter {
             if (null != authorization && authorization.startsWith("Bearer ")) {
                 token = authorization.substring(7);
                 userName = jwtUtility.getUsernameFromToken(token);
+
+                Boolean isTokenExpired = jwtUtility.isTokenExpired(token);
+
+                if(isTokenExpired){
+                    throw new JwtTokenExpiredException("Token Expired, generate new token");
+                }
             }
 
             if (null != userName && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails
+                SecurityUserDetails userDetails
                         = userService.loadUserByUsername(userName);
 
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
@@ -65,10 +74,13 @@ public class CustomFilterForAuthorization extends OncePerRequestFilter {
 
             }
         } catch (Exception ex) {
-            log.error("exception is :: {}", ex.getLocalizedMessage());
+            log.error("exception is ::", ex);
+            if(ex instanceof JwtTokenExpiredException || ex instanceof BadCredentialsException){
+                httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+            }
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
             ResponseDto<String> exceptionResponse = new ResponseDto<>();
-            exceptionResponse.setRd("Exception: " + ex.getMessage());
+            exceptionResponse.setRd(ex.getMessage());
             httpServletResponse.getWriter().write(GSON.toJson(exceptionResponse));
             return;
         }

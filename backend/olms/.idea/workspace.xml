@@ -5,19 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150b751-2fe8-47e7-87a1-190c16908500" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/configs/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/configs/security/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/controllers/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/controllers/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/utils/JWTUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/utils/JWTUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/utils/Utility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/utils/Utility.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/CourseMediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/CourseMediaService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../docs/project.docx" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/project.docx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="module" />
+    </option>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -30,6 +32,19 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="0227a176-4aa9-4632-b87c-e3467ec7cb28" />
+        <option name="url" value="https://github.com/rkumarkravi/learning-platform" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="JpbToolWindowState">
     <option name="isToolWindowVisible" value="false" />
@@ -46,21 +61,31 @@
     </option>
   </component>
   <component name="ProjectId" id="2e4oeJ0tD3UFgpNFuLXIjs0c7S6" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "D:/prof-projects/learning-platform/backend/olms"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/course-mgmt&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/github_repos/prof-projects/learning-platform/backend/olms&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
-    <key name="CopyClassDialog.RECENTS_KEY">
+    <key name="CreateClassDialog.RecentsKey">
       <recent name="com.rk.olms.dtos.responses" />
       <recent name="com.rk.olms.dtos.requests" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.rk.olms.dtos.requests" />
+      <recent name="com.rk.olms.daos.models" />
+      <recent name="com.rk.olms.dtos.responses" />
       <recent name="com.rk.olms.filters" />
       <recent name="com.rk.olms.utils" />
     </key>
@@ -94,6 +119,65 @@
       <option name="presentableId" value="Default" />
       <updated>1711173305098</updated>
     </task>
+    <task id="LOCAL-00001" summary="course metadata saved">
+      <created>1711265054496</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1711265054496</updated>
+    </task>
+    <task id="LOCAL-00002" summary="course metadata saved">
+      <created>1711283651277</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1711283651277</updated>
+    </task>
+    <task id="LOCAL-00003" summary="course content api added">
+      <created>1711283808930</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1711283808930</updated>
+    </task>
+    <task id="LOCAL-00004" summary="security role wise handling and other issues fixed">
+      <created>1711373192861</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1711373192861</updated>
+    </task>
+    <task id="LOCAL-00005" summary="media content apis added to get contents uploaded per course">
+      <created>1712848563263</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1712848563263</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
+  </component>
+  <component name="UpdateCopyrightCheckinHandler">
+    <option name="UPDATE_COPYRIGHT" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="course metadata saved" />
+    <MESSAGE value="course content api added" />
+    <MESSAGE value="security role wise handling and other issues fixed" />
+    <MESSAGE value="media content apis added to get contents uploaded per course" />
+    <option name="LAST_COMMIT_MESSAGE" value="media content apis added to get contents uploaded per course" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="org.springframework.security.access.AccessDeniedException" package="org.springframework.security.access" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

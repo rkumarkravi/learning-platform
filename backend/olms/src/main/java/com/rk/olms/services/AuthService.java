@@ -2,7 +2,7 @@ package com.rk.olms.services;
 
 import com.rk.olms.configs.security.SecurityUserDetails;
 import com.rk.olms.daos.models.UserEntity;
-import com.rk.olms.daos.repos.UserEntityRepository;
+import com.rk.olms.daos.repos.UserRepository;
 import com.rk.olms.dtos.ResponseDto;
 import com.rk.olms.dtos.requests.RenewTknReqDto;
 import com.rk.olms.dtos.requests.UserLoginReqDto;
@@ -10,12 +10,15 @@ import com.rk.olms.dtos.requests.UserRegisterReqDto;
 import com.rk.olms.dtos.responses.RenewTknResDto;
 import com.rk.olms.dtos.responses.UserLoginResDto;
 import com.rk.olms.dtos.responses.UserRegisterResDto;
+import com.rk.olms.dtos.responses.ValidTknResDto;
+import com.rk.olms.exception.JwtTokenExpiredException;
 import com.rk.olms.utils.JWTUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,14 +31,14 @@ import static com.rk.olms.utils.Utility.B64EN;
 @Service
 @Slf4j
 public class AuthService {
-    private final UserEntityRepository userEntityRepository;
+    private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
 
-    public AuthService(UserEntityRepository userEntityRepository, AuthenticationManager authenticationManager, JWTUtil jwtUtil, PasswordEncoder passwordEncoder) {
-        this.userEntityRepository = userEntityRepository;
+    public AuthService(UserRepository userRepository, AuthenticationManager authenticationManager, JWTUtil jwtUtil, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
@@ -52,7 +55,7 @@ public class AuthService {
         userEntity.setPhoneNumber(userReq.getPhoneNumber());
         userEntity.setInterests(String.join(",", userReq.getInterests()));
         userEntity.setFullName(userReq.getFullName());
-        userEntity = userEntityRepository.save(userEntity);
+        userEntity = userRepository.save(userEntity);
 
         UserRegisterResDto userRegisterResDto = new UserRegisterResDto(userEntity);
         responseDto.setPayload(userRegisterResDto);
@@ -76,6 +79,7 @@ public class AuthService {
             Map<String, Object> claims = new HashMap<>();
             claims.put("emid", B64EN.encode(userReq.getEmail().getBytes()));
             claims.put("uid", 0L);
+            claims.put("role", userEntityOptional.get().getRole());
 
             Map<String, String> tokens = jwtUtil.generateToken(userReq.getEmail(), claims);
             userResDto.setAt(tokens.get("authToken"));
@@ -112,8 +116,8 @@ public class AuthService {
             int uid = (int)claimsRt.get("uid");
             claimsRt.put("uid",++uid);
 
-            String rt=jwtUtil.updateRefreshToken(renewTknReqDto.getRt(),claimsRt);
-            String at=jwtUtil.doGenerateAuthToken(claimsRt.getSubject(),claimsRt);
+            String rt = jwtUtil.updateRefreshToken(renewTknReqDto.getRt(), claimsRt);
+            String at = jwtUtil.doGenerateAuthToken(claimsRt.getSubject(), claimsRt);
             renewTknResDto.setAt(at);
             renewTknResDto.setRt(rt);
 
@@ -122,6 +126,22 @@ public class AuthService {
             responseDto.setRs("Token Refreshed!");
         }
 
+        return responseDto;
+    }
+
+    public Object validateTkn(String at) throws JwtTokenExpiredException {
+        ResponseDto<ValidTknResDto> responseDto = new ResponseDto<>();
+        boolean isTokenExpired = jwtUtil.isTokenExpired(at);
+        ValidTknResDto.ValidTknResDtoBuilder validTknResDto = ValidTknResDto.builder().isValid(isTokenExpired);
+        if (isTokenExpired) {
+            throw new JwtTokenExpiredException("Token Expired");
+        } else {
+            SecurityUserDetails userDetails = (SecurityUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            validTknResDto.userDetails(new UserLoginResDto(userDetails.getUserEntity()));
+        }
+        responseDto.setRs("S");
+        responseDto.setRd("Token Valid!");
+        responseDto.setPayload(validTknResDto.build());
         return responseDto;
     }
 }
