@@ -2,9 +2,13 @@ import useAuthorization from "@/hooks/useAuthorization";
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ element }) {
-  const { isAuthorized } = useAuthorization();
+  const { isAuthorized,loading } = useAuthorization();
   console.log("ProtectedRoute",isAuthorized)
-  return isAuthorized ? element : <h1>Loading...</h1>;
+  if (loading) {
+    // Render loading indicator while authorization status is being checked
+    return <div>Loading...</div>;
+  }
+  return isAuthorized ? element : <Navigate to="/" replace />;
   //<Navigate to="/dssd" replace />
 }
 

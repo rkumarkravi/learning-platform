@@ -43,7 +43,7 @@ const AuthLayout: React.FC = () => {
             {isSignin ? `Don't have an account ?` : `Already have an account ?`}
           </span>
           <Button onClick={handleChange} variant="ghost">
-            {isSignin ? `Sign Up` : `Sign In`}
+            {isSignin ? `Register` : `Sign In`}
           </Button>
         </div>
       </div>

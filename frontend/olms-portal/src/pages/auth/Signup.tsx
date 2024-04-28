@@ -69,7 +69,7 @@ function Signup() {
 
   return (
     <div className="w-full p-6 shadow-md rounded-md">
-      <h2 className="text-2xl font-semibold mb-6">Signup</h2>
+      <h2 className="text-2xl font-semibold mb-6">Register</h2>
       <div>
         <form onSubmit={handleSubmit}>
           <Accordion type="single" collapsible className="w-full" defaultValue="item-1">

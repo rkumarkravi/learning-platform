@@ -11,9 +11,9 @@ function CreateCourse() {
   console.log(state.cid,location.pathname);
   return (
     <div className="sm:flex">
-      <Tabs defaultValue="course-metadata-form" className="sm:flex gap-2 sm:w-full">
-        <TabsList className=" w-min h-min sm:flex sm:flex-col sm:w-1/4">
-          <TabsTrigger value="course-metadata-form" className="sm:w-full mt-1">
+      <Tabs defaultValue="course-metadata-form" className="sm:flex sm:flex-col gap-2 sm:w-full">
+        <TabsList className=" w-min h-min sm:flex sm:w-1/4">
+          <TabsTrigger value="course-metadata-form" className="sm:w-full">
             Course Details
           </TabsTrigger>
           <TabsTrigger value="course-topics" className="sm:w-full">
