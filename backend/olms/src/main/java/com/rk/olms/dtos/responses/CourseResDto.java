@@ -1,7 +1,6 @@
 package com.rk.olms.dtos.responses;
 
 import com.rk.olms.daos.models.CourseEntity;
-import com.rk.olms.dtos.requests.CourseReqDto;
 import com.rk.olms.enums.Audience;
 import com.rk.olms.enums.ProficiencyLevel;
 import lombok.Data;
@@ -28,6 +27,7 @@ public class CourseResDto {
     private Audience audience;
     private boolean certificationAvailable;
     private String version;
+    private Double amount;
 
     public CourseResDto(CourseEntity ent) {
         this.setCId(ent.getCourseId());
@@ -45,5 +45,6 @@ public class CourseResDto {
         this.setAudience(ent.getAudience());
         this.setCertificationAvailable(ent.isCertificationAvailable());
         this.setVersion(ent.getVersion());
+        this.setAmount(ent.getAmount());
     }
 }

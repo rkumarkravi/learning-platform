@@ -37,6 +37,7 @@ public class CourseEntity {
     private boolean certificationAvailable;
     private String version;
     private int likes = 0;
+    private Double amount = 0d;
 
     @ToString.Exclude
     @ManyToOne(optional = false)
@@ -58,5 +59,6 @@ public class CourseEntity {
         this.setAudience(dto.getAudience());
         this.setCertificationAvailable(dto.isCertificationAvailable());
         this.setVersion(dto.getVersion());
+        this.setAmount(dto.getAmount());
     }
 }

@@ -5,10 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8150b751-2fe8-47e7-87a1-190c16908500" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/controllers/EnrollmentAndPaymentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/daos/models/PaymentEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/daos/models/StudentEnrolledEntity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/daos/repos/PaymentRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/daos/repos/StudentEnrolledRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/dtos/requests/EnrollmentReqDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/EnrollmentAndPaymentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jpa-buddy.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jpa-buddy.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/CourseMediaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/CourseMediaService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../docs/project.docx" beforeDir="false" afterPath="$PROJECT_DIR$/../../docs/project.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/daos/models/CourseEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/daos/models/CourseEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/dtos/requests/CourseReqDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/dtos/requests/CourseReqDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/dtos/responses/CourseResDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/dtos/responses/CourseResDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rk/olms/services/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/olms-portal/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/olms-portal/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/auth/AuthLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/auth/AuthLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/auth/ProtectedRoute.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/auth/ProtectedRoute.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/auth/Signup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/auth/Signup.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/main/MainLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/main/MainLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/main/teacher-comps/create-course/CreateCourse.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/olms-portal/src/pages/main/teacher-comps/create-course/CreateCourse.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +40,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
+        <option value="com.haulmont.jpb.JpaEntity" />
         <option value="com.haulmont.jpb.JpaRepository" />
         <option value="Class" />
       </list>
@@ -72,15 +88,15 @@
   &quot;keyToString&quot;: {
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/course-mgmt&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/github_repos/prof-projects/learning-platform/backend/olms&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
-      <recent name="com.rk.olms.dtos.responses" />
       <recent name="com.rk.olms.dtos.requests" />
+      <recent name="com.rk.olms.dtos.responses" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.rk.olms.dtos.requests" />

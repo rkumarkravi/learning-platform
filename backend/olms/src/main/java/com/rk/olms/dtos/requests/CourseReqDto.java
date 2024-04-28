@@ -23,4 +23,5 @@ public class CourseReqDto {
     private Audience audience;
     private boolean certificationAvailable;
     private String version;
+    private Double amount;
 }
